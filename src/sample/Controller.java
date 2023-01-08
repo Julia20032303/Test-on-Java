@@ -12,6 +12,9 @@ import java.util.List;
 
 public class Controller {
 
+    /*
+    Referencing objects within the design
+     */
     @FXML
     private ToggleGroup answers;
 
@@ -33,6 +36,10 @@ public class Controller {
     @FXML
     private Button answerBtn;
 
+
+    /*An array based on the class Questions.
+      Each object is a question with a set of possible answers.
+    */
     private Questions[] questions = new Questions[] {
             new Questions("Який модифікатор доступу необхідно використовувати, щоб змінну було видно лише в поточному класі?",
                     new String[] {"default (package visible)", "public", "protected", "private"}),
@@ -46,54 +53,67 @@ public class Controller {
                     new String[] {"5", "100", "1", "Необмежену кількість"})
     };
 
-
+    //Variables for setting the current question number and for counting the number of correct answers
     private int nowQuestion = 0, correctAnswers;
+    //This variable will be set to the correct answer of the current question.
     private String nowCorrectAnswer;
 
     @FXML
     public void initialize() {
+        //We take the correct answer for the current question
         nowCorrectAnswer = questions[nowQuestion].correctAnswer();
 
+        //Tracking clicks on the "Відповісти" button
         answerBtn.setOnAction(e -> {
             RadioButton selectedRadioButton = (RadioButton) answers.getSelectedToggle();
+            //The code is not executed if the answer is not selected
             if(selectedRadioButton != null) {
+                //Get response text
                 String toogleGroupValue = selectedRadioButton.getText();
 
-
+                //Checking the answer with the correct one
                 if(toogleGroupValue.equals(nowCorrectAnswer)) {
+                    //We display information about the correctness of the answer
                     System.out.println("Відповідь правильна");
                     correctAnswers++;
                 } else {
                     System.out.println("Відповідь не правильна");
                 }
 
+                //If now was the last question, then hide all fields
                 if(nowQuestion + 1 == questions.length) {
-                    radio_btn_1.setVisible(false);
+                    radio_btn_1.setVisible(false);  //Hiding all selection fields
                     radio_btn_2.setVisible(false);
                     radio_btn_3.setVisible(false);
                     radio_btn_4.setVisible(false);
-                    answerBtn.setVisible(false);
+                    answerBtn.setVisible(false);   //Hiding the answer button
 
+                    //Show result text
                     question_text.setText("Ви відповіли правильно на " + correctAnswers + " з " + questions.length + " питань!");
                 } else {
+                    //Increase the number of the current question if there are more questions
                     nowQuestion++;
+
+                    //Specify the new text of the correct answer
                     nowCorrectAnswer = questions[nowQuestion].correctAnswer();
-
-
+                    //Change the text of the question in the program
                     question_text.setText(questions[nowQuestion].getQuestion());
+                    //Getting an array of responses
                     String[] answers = questions[nowQuestion].getAnswers();
 
-
+                    //Convert array to list
                     List<String> intList = Arrays.asList(answers);
 
-
+                    //Sort randomly
                     Collections.shuffle(intList);
 
+                    //We substitute answers in the radio button
                     radio_btn_1.setText(intList.get(0));
                     radio_btn_2.setText(intList.get(1));
                     radio_btn_3.setText(intList.get(2));
                     radio_btn_4.setText(intList.get(3));
 
+                    //Remove the selection that the user has previously specified
                     selectedRadioButton.setSelected(false);
                 }
 
